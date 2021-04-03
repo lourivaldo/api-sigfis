@@ -9,9 +9,8 @@ export class User1617469599783 implements MigrationInterface {
       columns: [
         {
           name: "id",
-          type: "int",
+          type: "uuid",
           isPrimary: true,
-          generationStrategy: 'increment',
         },
         {
           name: "name",
@@ -19,7 +18,7 @@ export class User1617469599783 implements MigrationInterface {
         },
         {
           name: "email",
-          type: "varchar(100)",
+          type: "varchar(200)",
         },
         {
           name: "created_at",

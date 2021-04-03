@@ -71,3 +71,108 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Run Docker
+
+```bash
+$ docker-compose up
+```
+
+## Migrations
+
+```bash
+$ docker-compose exec app sh
+
+# Generate a new migration
+$ npm run typeorm migration:create -- -n User
+
+# This command will execute all pending migrations
+$ npm run typeorm:migrate
+
+# This command will execute down in the latest executed migration
+$ npm run typeorm migration:revert
+```
+
+## PgAdmin
+```http://localhost:9000/browser/```
+```
+User: admin@sigfis.com
+Password: 123456
+```
+
+Access menu ```Object - Create - Server```:
+```
+Name: sigfis
+Host: db
+Port: 5432
+Username: postgres
+Password: postgres
+```
+
+## Install QGIS 3.4 Madeira (Ubuntu 18:04)
+[Fonte](https://medium.com/@linhlinhle997/install-qgis-3-4-x-madeira-ltr-on-ubuntu-18-04-47da03f7cd53)
+
+#### Step 1 — Add the package source in the apt source list:
+Open /etc/apt/sources.list with:
+```
+$ sudo gedit /etc/apt/sources.list
+```
+Then copy and paste the following two lines to the bottom of this file:
+```
+deb https://qgis.org/ubuntugis-ltr bionic main
+deb-src https://qgis.org/ubuntugis-ltr bionic main
+```
+Then save (CTRL + s) then exit.
+
+#### Step 2 — Add the QGIS public key
+Add the GPG key
+```
+$ wget -O - https://qgis.org/downloads/qgis-2020.gpg.key | gpg --import
+
+```
+Verify the key
+```
+$ gpg --fingerprint F7E06F06199EF2F2
+```
+Add the key to apt
+```
+$ gpg --export --armor F7E06F06199EF2F2 | sudo apt-key add -
+```
+
+#### Step 3 — After install QGIS:
+```
+$ sudo apt-get update
+$ sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+$ sudo apt install qgis python3-qgis
+```
+
+## Export GeoJson
+```
+SELECT json_build_object(
+    'type', 'FeatureCollection',
+    'crs',  json_build_object(
+        'type',      'name', 
+        'properties', json_build_object(
+            'name', 'EPSG:4326'  
+        )
+    ), 
+    'features', json_agg(
+        json_build_object(
+            'type',       'Feature',
+            'id',         'id', -- the GeoJson spec includes an 'id' field, but it is optional, replace {id} with your id field
+            'geometry',   ST_AsGeoJSON(geom)::json,
+            'properties', json_build_object(
+                -- list of fields
+                'geom', 'to',
+                'nome', 'cep'
+            )
+        )
+    )
+)
+FROM fiscalizacoes;  --replace with your table name
+```
+
+### CLI
+```
+nest g controller fiscalizacoes
+```

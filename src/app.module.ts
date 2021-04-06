@@ -6,6 +6,7 @@ import { FiscalizacoesController } from './fiscalizacoes/fiscalizacoes.controlle
 import { UsersModule } from './users/users.module';
 import { FiscalizacoesRepository } from './fiscalizacoes/fiscalizacoes.repository';
 import { LayersService } from './layers/layers.service';
+import { FiscalizacoesService } from './fiscalizacoes/fiscalizacoes.service';
 import { LayersRepository } from './layers/layers.repository';
 import { LayersController } from './layers/layers.controller';
 
@@ -17,6 +18,12 @@ import { LayersController } from './layers/layers.controller';
     UsersModule,
   ],
   controllers: [AppController, FiscalizacoesController, LayersController],
-  providers: [AppService, FiscalizacoesRepository, LayersService, LayersRepository],
+  providers: [
+    AppService,
+    FiscalizacoesRepository,
+    LayersService,
+    FiscalizacoesService,
+    LayersRepository,
+  ],
 })
 export class AppModule {}

@@ -1,52 +1,71 @@
 import { getManager } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class FiscalizacoesRepository {
-  async getFile(): Promise<string> {
+  async index(page: number, type: string, search?: string): Promise<any[]> {
     const entityManager = getManager();
-    const fileQuery = entityManager.query(`
-SELECT json_build_object(
-    'type', 'FeatureCollection',
-    'crs',  json_build_object(
-        'type',      'name', 
-        'properties', json_build_object(
-            'name', 'EPSG:4326'  
-        )
-    ), 
-    'features', json_agg(
-        json_build_object(
-            'type',       'Feature',
-            'id',         'id', -- the GeoJson spec includes an 'id' field, but it is optional, replace {id} with your id field
-            'geometry',   ST_AsGeoJSON(geom)::json,
-            'properties', json_build_object(
-                'geom', 
-                'to',
-                'nome', 
-                'cep'
-            )
-        )
-    )
-)
-FROM fiscalizacoes`,
-      []);
+
+    let fileQuery;
+
+    if (type == 'recent' && search) {
+      const query = `
+    SELECT * 
+    FROM fiscalizacoes
+    WHERE sit_proc NOT IN ('ARQUIVADO')
+      AND (
+      denunciado ILIKE $3
+      OR nome ILIKE $3
+      OR logradouro ILIKE $3
+      OR bairro ILIKE $3
+      OR municipio ILIKE $3
+      OR bacia ILIKE $3
+      OR uso ILIKE $3
+      )
+    ORDER BY REVERSE(dt_entrada) DESC
+    OFFSET $1
+    LIMIT $2`
+      fileQuery = entityManager.query(query,[
+        100 * (page - 1),
+        100,
+        `%${search}%`
+      ]);
+
+    } else if (type == 'recent') {
+      const query = `
+    SELECT * 
+    FROM fiscalizacoes
+    WHERE sit_proc NOT IN ('ARQUIVADO')
+    ORDER BY REVERSE(dt_entrada) DESC
+    OFFSET $1
+    LIMIT $2`
+      fileQuery = entityManager.query(query,[
+        100 * (page - 1),
+        100
+      ]);
+
+    } /*else if (type == 'archived') {
+      query = `
+    SELECT * 
+    FROM fiscalizacoes
+    ORDER BY REVERSE(dt_entrada) DESC
+    WHERE sit_proc = $3
+    OFFSET $1
+    LIMIT $2`
+    } else if (type == '') {
+      query = `
+    SELECT * 
+    FROM fiscalizacoes
+    ORDER BY RANDOM()
+    OFFSET $1
+    LIMIT $2`
+    }*/
+
+
 
     const result = await fileQuery;
 
-    if (result && result[0] && result[0]['json_build_object']) {
-      return result[0]['json_build_object'];
-    }
-
-    return null;
-  }
-
-  async test(): Promise<string> {
-    const entityManager = getManager();
-    const someQuery = entityManager.query(`SELECT * FROM "users" as u WHERE id > $1`,
-      [uuidv4()]);
-    console.log(someQuery);
-    return someQuery;
+    return result;
   }
 
 }

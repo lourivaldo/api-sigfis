@@ -15,7 +15,7 @@ export class FiscalizacoesRepository {
       const query = `
       SELECT * 
       FROM fiscalizacoes
-      WHERE sit_proc NOT IN ('ARQUIVADO')
+      WHERE (sit_proc NOT IN ('ARQUIVADO') OR sit_proc IS NULL)
         AND (
         denunciado ILIKE $3
         OR nome ILIKE $3
@@ -25,7 +25,7 @@ export class FiscalizacoesRepository {
         OR bacia ILIKE $3
         OR uso ILIKE $3
         )
-      ORDER BY REVERSE(dt_entrada) DESC
+      ORDER BY TO_DATE(dt_entrada, 'DD/MM/YYYY') DESC
       OFFSET $1
       LIMIT $2`
       fileQuery = entityManager.query(query,[
@@ -38,8 +38,8 @@ export class FiscalizacoesRepository {
       const query = `
       SELECT * 
       FROM fiscalizacoes
-      WHERE sit_proc NOT IN ('ARQUIVADO')
-      ORDER BY REVERSE(dt_entrada) DESC
+      WHERE (sit_proc NOT IN ('ARQUIVADO') OR sit_proc IS NULL)
+      ORDER BY TO_DATE(dt_entrada, 'DD/MM/YYYY') DESC
       OFFSET $1
       LIMIT $2`
       fileQuery = entityManager.query(query,[
@@ -51,7 +51,7 @@ export class FiscalizacoesRepository {
       const query = `
       SELECT * 
       FROM fiscalizacoes
-      WHERE sit_proc NOT IN ('ARQUIVADO')
+      WHERE (sit_proc NOT IN ('ARQUIVADO') OR sit_proc IS NULL)
       AND (
         denunciado ILIKE $3
         OR nome ILIKE $3
@@ -61,7 +61,7 @@ export class FiscalizacoesRepository {
         OR bacia ILIKE $3
         OR uso ILIKE $3
         )
-      ORDER BY REVERSE(dt_entrada) DESC
+      ORDER BY TO_DATE(dt_entrada, 'DD/MM/YYYY') DESC
       OFFSET $1
       LIMIT $2`
       fileQuery = entityManager.query(query,[
@@ -73,8 +73,8 @@ export class FiscalizacoesRepository {
       const query = `
       SELECT * 
       FROM fiscalizacoes
-      WHERE sit_proc NOT IN ('ARQUIVADO')
-      ORDER BY REVERSE(dt_entrada) DESC
+      WHERE (sit_proc NOT IN ('ARQUIVADO') OR sit_proc IS NULL) AND id IN ('981', '980', '979', '978', '967', '966', '965')
+      ORDER BY TO_DATE(dt_entrada, 'DD/MM/YYYY') DESC
       OFFSET $1
       LIMIT $2`
       fileQuery = entityManager.query(query,[
@@ -95,7 +95,7 @@ export class FiscalizacoesRepository {
         OR bacia ILIKE $3
         OR uso ILIKE $3
         )
-      ORDER BY REVERSE(dt_entrada) DESC
+      ORDER BY TO_DATE(dt_entrada, 'DD/MM/YYYY') DESC
       OFFSET $1
       LIMIT $2`
       fileQuery = entityManager.query(query,[
@@ -108,7 +108,7 @@ export class FiscalizacoesRepository {
       SELECT * 
       FROM fiscalizacoes
       WHERE sit_proc IN ('ARQUIVADO')
-      ORDER BY REVERSE(dt_entrada) DESC
+      ORDER BY TO_DATE(dt_entrada, 'DD/MM/YYYY') DESC
       OFFSET $1
       LIMIT $2`
       fileQuery = entityManager.query(query,[
